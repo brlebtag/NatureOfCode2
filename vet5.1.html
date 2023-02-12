@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <title>Vector 5 - Unity Vector (Normalize), Subtraction</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            function setup() {
+                createCanvas(400, 400);
+                background(0);
+            }
+
+            function draw() {
+                let pos = createVector(width / 2, height / 2);
+                let mouse = createVector(mouseX, mouseY);
+                let v = p5.Vector.sub(pos, mouse);
+                translate(width/2, height / 2);
+                strokeWeight(4);
+                stroke(255, 50);
+                line(0, 0, v.x, v.y);
+            }
+        </script>
+    </head>
+</html> 

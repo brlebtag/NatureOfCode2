@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>Introduction 3 - Perlin Noise</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            var xoff = 0;
+            function setup() {
+                createCanvas(400, 400);
+            }
+
+            function draw() {
+                background(51);
+                //var x = random(width); // Plotting randomly
+
+                var x = map(noise(xoff),0 ,1, 0, width); // Plotting randomly but smoothly
+
+                xoff += 0.01; // this value (0.01), if close to 0 reduce the "randomness" while bigger values increases randomness (but still it is less random the pure random) (commented above line).
+
+                ellipse(x, 200, 24, 24);
+            }
+        </script>
+    </head>
+</html>

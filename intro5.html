@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <title>Introduction 5 - 2D Perlin Noise</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            // var xoff = 0;
+            // var yoff = 10000;
+            var inc = 0.01;
+
+            function setup() {
+                createCanvas(200, 200);
+            }
+
+            function draw() {
+                var yoff = 0;
+
+                loadPixels();
+                
+                for (let y = 0; y < height; y++) {
+                    var xoff = 0;
+                    for (let x = 0; x < width; x++) {
+                        var index = (x + y * width) * 4;
+                        // var r = random(255); // Random
+                        var r = noise(xoff, yoff) * 255;
+
+                        pixels[index + 0] = r;
+                        pixels[index + 1] = r;
+                        pixels[index + 2] = r;
+                        pixels[index + 3] = 255;
+
+                        xoff += inc;
+                    }
+
+                    yoff += inc;
+                }
+                
+                updatePixels();
+            }
+        </script>
+    </head>
+</html>

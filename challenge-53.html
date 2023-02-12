@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <title>Code Challenge # 53 - Random Walker + Vector + Levy Flight</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            var pos;
+            var prev;
+
+            function setup() {
+                createCanvas(800, 600);
+                background(51);
+                pos = createVector(width/2, height/2);
+                prev = pos.copy();
+            }
+
+            function draw() {
+                stroke(255);
+                strokeWeight(3);
+                // point(pos.x, pos.y);
+                line(pos.x, pos.y, prev.x, prev.y);
+                prev.set(pos);
+
+                var r = floor(random(4));
+                var step = p5.Vector.random2D();
+
+                var r = random(100);
+
+                if (r < 1) {
+                    step.mult(25, 100);
+                } else {
+                    step.setMag(2);
+                }
+
+                
+                pos.add(step);
+            }
+        </script>
+    </head>
+</html>

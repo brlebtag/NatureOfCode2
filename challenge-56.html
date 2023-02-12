@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <title>Code Challenge # 56 - Random Walker</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            var x;
+            var y;
+
+            function setup() {
+                createCanvas(200, 200);
+                x = width / 2;
+                y = height / 2;
+                background(51);
+            }
+
+            function draw() {
+                stroke(255);
+                strokeWeight(3);
+                point(x, y);
+
+                var r = floor(random(4));
+
+                switch(r) {
+                    case 0:
+                        x += 1;
+                        break;
+                    case 1:
+                        x -= 1;
+                        break;
+                    case 2:
+                        y += 1;
+                        break;
+                    case 3:
+                        y -= 1;
+                        break;
+                }
+            }
+        </script>
+    </head>
+</html>

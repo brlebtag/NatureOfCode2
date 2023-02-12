@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title>Vector 6 - Acceleration Vector</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            class Mover {
+                constructor(x, y) {
+                    this.pos = createVector(x, y);
+                    // this.velocity = p5.Vector.random2D().mult(random(3));
+                    this.velocity = createVector();
+                    // this.acceleration = p5.Vector.random2D().setMag(0.01);
+                }
+
+                update() {
+                    var mouse = createVector(mouseX, mouseY);
+                    this.acceleration = p5.Vector.sub(this.pos, mouse); // when I invert, pos run away from mouse
+                    this.acceleration.setMag(1);
+                    this.velocity.add(this.acceleration);
+                    this.velocity.limit(5);
+                    this.pos.add(this.velocity);
+                }
+
+                show() {
+                    stroke(255);
+                    strokeWeight(3);
+                    fill(255, 100);
+                    ellipse(this.pos.x, this.pos.y, 32);
+                }
+            }
+
+            var mover;
+
+            function setup() {
+                createCanvas(800, 600);
+                mover = new Mover(width/2, height/2);
+            }
+
+            function draw() {
+                background(0);
+                mover.update();
+                mover.show();
+            }
+        </script>
+    </head>
+</html> 

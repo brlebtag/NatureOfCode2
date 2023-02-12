@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <title>Force 1: Force, Gravity and Wind</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            class Mover {
+                constructor(x, y) {
+                    this.pos = createVector(x, y);
+                    this.velocity = createVector() /*p5.Vector.random2D().mult(5)*/;
+                    this.acceleration = createVector();
+                    this.mass = 1;
+                }
+
+                edges() {
+                    if (this.pos.y >= height) {
+                        this.pos.y = height;
+                        this.velocity.y *= -1;
+                    }
+                }
+
+                applyForce(force) {
+                    this.acceleration = force.div(this.mass); // F = m * a => a = F / m (1) => a = F;
+                }
+
+                update() {
+                    this.velocity.add(this.acceleration);
+                    this.pos.add(this.velocity);
+                    this.acceleration.set(0, 0);
+                }
+
+                show() {
+                    stroke(255);
+                    strokeWeight(3);
+                    fill(255, 100);
+                    ellipse(this.pos.x, this.pos.y, 32);
+                }
+            }
+
+            var mover;
+
+            function setup() {
+                createCanvas(800, 600);
+                mover = new Mover(width/2, height/2);
+            }
+
+            function draw() {
+                background(0);
+                let gravity = createVector(0, 0.1);
+                if (mouseIsPressed) {
+                    mover.applyForce(gravity);
+                }
+                mover.update();
+                mover.edges();
+                mover.show();
+            }
+        </script>
+    </head>
+</html> 

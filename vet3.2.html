@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title>Vector 3 - Random Vector + Mult()</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            var speed = 0;
+            var inc = 0.01;
+
+            class Walker {
+                constructor(x, y) {
+                    this.pos = createVector(x, y);
+                    this.velocity = p5.Vector.random2D();
+                }
+
+                update() {
+                    // this.pos.x += this.velocity.x;
+                    // this.pos.y += this.velocity.y;
+                    this.velocity.mult(noise(speed) * 2);
+                    this.pos.add(this.velocity);
+                }
+
+                show() {
+                    stroke(255);
+                    strokeWeight(3);
+                    fill(255, 100);
+                    ellipse(this.pos.x, this.pos.y, 32);
+                }
+            }
+
+            var walker;
+
+            function setup() {
+                createCanvas(200, 200);
+                walker = new Walker(width / 2, height / 2);
+            }
+
+            function draw() {
+                background(0);
+                walker.update();
+                walker.show();
+                speed += inc;
+            }
+        </script>
+    </head>
+</html> 

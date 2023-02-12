@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <title>Force 2: Mass and Acceleration</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            class Mover {
+                constructor(x, y, m = 1) {
+                    this.pos = createVector(x, y);
+                    this.velocity = createVector() /*p5.Vector.random2D().mult(5)*/;
+                    this.acceleration = createVector();
+                    this.mass = m;
+                    this.radius = sqrt(this.mass) * 10;
+                }
+
+                edges() {
+                    if (this.pos.y >= (height - this.radius)) {
+                        this.pos.y = height - this.radius;
+                        this.velocity.y *= -1;
+                    }
+
+                    if (this.pos.x >= (width - this.radius)) {
+                        this.pos.x = width - this.radius;
+                        this.velocity.x *= - 1;
+                    } else if (this.pos.x <= 0) {
+                        this.pos.x = this.radius;
+                        this.velocity.x *= -1;
+                    }
+                }
+
+                applyForce(force) {
+                    this.acceleration.add(p5.Vector.div(force, this.mass)); // F = m * a => a = F / m (1) => a = F;
+                }
+
+                update() {
+                    this.velocity.add(this.acceleration);
+                    this.pos.add(this.velocity);
+                    this.acceleration.set(0, 0);
+                }
+
+                show() {
+                    stroke(255);
+                    strokeWeight(3);
+                    fill(255, 100);
+                    ellipse(this.pos.x, this.pos.y, this.radius * 2);
+                }
+            }
+
+            var movers = [];
+
+            function setup() {
+                createCanvas(800, 600);
+                movers.push(new Mover(100, height/2, 2));
+                movers.push(new Mover(width/2, height/2, 4));
+            }
+
+            function draw() {
+                let wind = createVector(0.1, 0);
+                let gravity = createVector(0, 0.2);
+                background(0);                
+
+                for (let index = 0; index < movers.length; index++) {
+                    const mover = movers[index];
+
+                    if (mouseIsPressed) {
+                        mover.applyForce(wind);
+                    }
+
+                    mover.applyForce(p5.Vector.mult(gravity, mover.mass)); // weight = gravity acceleration * mass
+
+                    mover.update();
+                    mover.edges();
+                    mover.show();
+                }
+            }
+        </script>
+    </head>
+</html> 

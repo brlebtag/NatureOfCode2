@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <title>Vector 4 - Unity Vector (Normalize), Subtraction</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            function setup() {
+                createCanvas(800, 600);
+            }
+
+            function draw() {
+                background(0);
+                strokeWeight(4);
+                translate(width/2, height / 2);
+
+                let pos = createVector(100, 100);
+                let mouse = createVector(mouseX - width/2, mouseY - height / 2);
+                let v = p5.Vector.sub(mouse, pos);
+                let opposit = p5.Vector.mult(mouse, -1);
+                
+
+                stroke(0, 0, 255); // Blue
+                line(0, 0, pos.x, pos.y);
+                
+                stroke(0, 255, 0); // Green
+                line(0, 0, mouse.x, mouse.y);
+
+                stroke(255, 0, 0); //Red
+                line(0 , 0, opposit.x, opposit.y);
+                
+                stroke(255, 182, 193); //Pink
+                line(pos.x, pos.y, pos.x+opposit.x, pos.y+opposit.y);
+
+                stroke(255, 50);
+                line(0, 0, -v.x, -v.y);
+
+                stroke(255);
+                line(pos.x, pos.y, pos.x+v.x, pos.y+v.y);
+            }
+        </script>
+    </head>
+</html> 
