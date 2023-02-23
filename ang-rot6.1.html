@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>Angles and Rotation 6.1 - Graphing Sine Wave</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+
+        var angle = 0;
+        var angleVelocity = 0;
+        var radius = 4;
+        var angles = [];
+        var angleVelocities = [];
+
+        function setup() {
+            createCanvas(800, 600);
+            let total = floor(width / (radius * 2));
+            for (let i = 0; i < total + 1; i++) {
+                angles[i] = map(i, 0, total, 0, 2*TWO_PI);
+                angleVelocities[i] = 0.01 + i / 100;
+            }
+        }
+
+        function draw() {
+            background(0);
+            translate(width / 2, height /2);
+            // fill(252, 238, 33);
+            noFill();
+            stroke(252, 238, 33);
+            // let r = map(sin(angle), -1, 1, 0, 200);
+            beginShape();
+            for (let i = 0; i < angles.length; i++) {
+                let y = map(sin(angles[i]), -1, 1, -200, 200);
+                stroke(255);
+                let x = map(i, 0, angles.length, - width / 2, width / 2);
+                // line(x, 0, x, y);                
+                angles[i] += angleVelocities[i];
+                // circle(x, y, 32);
+                vertex(x, y);
+            }
+            endShape();
+        }
+        </script>
+    </head>
+</html> 

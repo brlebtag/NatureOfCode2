@@ -1,0 +1,124 @@
+<html>
+    <head>
+        <title>Particles 4.1: Particle Systems with Image Textures</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+
+            class Emitter {
+                constructor (x, y) {
+                    this.pos = createVector(x, y);
+                    this.particles = [];
+                }
+
+                emit(num) {
+                    for (let i = 0; i < num; i++) {
+                        this.particles.push(new Particle(this.pos.x, this.pos.y));
+                    }
+                }
+
+                applyForce(force) {
+                    for (const p of this.particles) {
+                        p.applyForce(force);
+                    }
+                }
+
+                update() {
+                    for (const p of this.particles) {
+                        p.update();
+                    }
+
+                    for (let i = this.particles.length - 1; i >= 0; i--) {
+                        if (this.particles[i].finished()) {
+                            this.particles.splice(i, 1);
+                        }
+                    }
+                }
+
+                show() {
+                    for (const p of this.particles) {
+                        p.show();
+                    }
+                }
+            }
+
+            class Particle {
+                constructor(x, y) {
+                    this.pos = createVector(x, y);
+                    this.velocity = p5.Vector.random2D().mult(random(1, 5));
+                    this.acceleration = createVector();
+                    this.mass = 1;
+                    this.radius = 64;
+                    this.lifetime = 255;
+                }
+
+                edges() {
+                    if (this.pos.y >= (height - this.radius)) {
+                        this.pos.y = height - this.radius;
+                        this.velocity.y *= -1;
+                    }
+
+                    if (this.pos.x >= (width - this.radius)) {
+                        this.pos.x = width - this.radius;
+                        this.velocity.x *= - 1;
+                    } else if (this.pos.x <= 0) {
+                        this.pos.x = this.radius;
+                        this.velocity.x *= -1;
+                    }
+                }
+
+                applyForce(force) {
+                    this.acceleration.add(force); // F = m * a => a = F / m (1) => a = F;
+                }
+
+                update() {
+                    this.velocity.add(this.acceleration);
+                    this.pos.add(this.velocity);
+                    this.acceleration.set(0, 0);
+                    this.lifetime -= 10;
+                }
+
+                finished() {
+                    return this.lifetime < 0;
+                }
+
+                show() {
+                    tint(255, 40, 80, this.lifetime);
+                    imageMode(CENTER);
+                    image(img, this.pos.x, this.pos.y, this.radius, this.radius);
+                }
+            }
+
+            let emitters = [];
+            const TotalParticles = 100;
+            let img;
+
+            function preload() {
+                img = loadImage('texture32.png');
+            }
+
+            function setup() {
+                createCanvas(800, 600);
+                emitters[0] = new Emitter(width / 2, height);
+            }
+
+            // Challenge: https://www.youtube.com/watch?v=CKeyIbT3vXI&ab_channel=TheCodingTrain
+
+            function draw() {
+                clear();
+                background(0);
+                blendMode(ADD);
+
+                let gravity = createVector(0, -0.1);
+                let intensity = map(mouseY, 0, height, 0, 10);
+                let wind = createVector(map(mouseX, 0, width, -intensity, intensity) / 2, 0);
+
+                for (const emitter of emitters) {
+                    emitter.emit(2);
+                    emitter.show();
+                    emitter.applyForce(gravity.add(wind));
+                    emitter.update();   
+                }
+            }
+        </script>
+    </head>
+</html> 

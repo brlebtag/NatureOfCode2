@@ -1,0 +1,35 @@
+
+<html>
+    <head>
+        <title>Challenge #160.1 - Spring Forces</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            let y = 250;
+            let restLength = 200;
+            let k = 0.01;
+            let mass = 1;
+            let velocity = 0;
+
+            function setup() {
+                createCanvas(800, 600);
+            }
+
+            // // Challenge https://www.youtube.com/watch?v=uWzPe_S-RVE&ab_channel=TheCodingTrain
+
+            function draw() {
+                background(112, 50, 126);
+                noStroke();
+                fill(45, 197, 244);
+                circle(300, y, 64);
+
+                let displacement = y - restLength;
+                let force = -k * displacement;
+
+                // F = M(1) * A => A = F / M
+                velocity += force / mass;
+                y += velocity;
+                velocity *= 0.99;
+            }
+        </script>
+    </head>
+</html> 

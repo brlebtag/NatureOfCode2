@@ -1,0 +1,41 @@
+
+<html>
+    <head>
+        <title>Angles and Rotation 7 - Additive Waves</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+
+        var angle = 0;
+        var angleVelocity = 0;
+        let wave;
+        let spacing = 10; //pixels
+
+        class Wave {
+            constructor(amplitude, period, phase) {
+                this.amplitude = amplitude; // Distance in the Y-axis to zero (middle) (up and down)
+                this.period = period; // how long to repeat the whole wave
+                this.phase  = phase; // shifting/offset from 0 (the beginning)
+            }
+
+            calculate(x) {
+                return sin(this.phase + (TWO_PI * x / this.period)) * this.amplitude;
+            }
+        }
+
+        function setup() {
+            createCanvas(800, 600);
+            wave = new Wave(50, width/2, 100);
+        }
+
+        function draw() {
+            background(0);
+            
+            for (let x = 0; x < width; x += spacing) {
+                let y = wave.calculate(x);
+                let windowXShift = height / 2;
+                ellipse(x, y + windowXShift, spacing);
+            }
+        }
+        </script>
+    </head>
+</html> 

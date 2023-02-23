@@ -1,0 +1,94 @@
+<html>
+    <head>
+        <title>Gravitational Attraction 1.2</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            const G = 5;
+
+            class Mover {
+                constructor(x, y, m = 1) {
+                    this.pos = createVector(x, y);
+                    this.velocity = p5.Vector.random2D().mult(5) /*p5.Vector.random2D().mult(5)*/;
+                    this.acceleration = createVector(0, 0);
+                    this.mass = m;
+                    this.radius = sqrt(this.mass) * 2;
+                }
+
+                applyForce(force) {
+                    this.acceleration.add(p5.Vector.div(force, this.mass)); // F = m * a => a = F / m (1) => a = F;
+                }
+
+                update() {
+                    this.velocity.add(this.acceleration);
+                    this.pos.add(this.velocity);
+                    this.acceleration.set(0, 0);
+                }
+
+                show() {
+                    stroke(255);
+                    strokeWeight(3);
+                    fill(255, 100);
+                    ellipse(this.pos.x, this.pos.y, this.radius * 2);
+                }
+            }
+
+            class Attractor {
+                constructor(x, y, m = 1) {
+                    this.pos = createVector(x, y);
+                    this.mass = m;
+                    this.radius = sqrt(this.mass) * 2;
+                }
+
+                show() {
+                    stroke(255);
+                    strokeWeight(3);
+                    fill(255, 0, 0);
+                    ellipse(this.pos.x, this.pos.y, this.radius * 2);
+                }
+
+                attract(mover) {
+                    let force = p5.Vector.sub(this.pos, mover.pos);
+                    let distanceSq = constrain(force.magSq(), 100, 1000);
+                    let strength = G * (this.mass * mover.mass) / distanceSq;
+                    force.setMag(strength);
+                    mover.applyForce(force);
+                }
+            }
+
+            var movers = [];
+            var attractors = [];
+            const TotalMovers = 10;
+            const TotalAttractors = 1;
+
+            function setup() {
+                createCanvas(800, 600);
+
+                for (let i = 0; i < TotalMovers; i++) {
+                    movers.push(new Mover(random(width), random(height), 50));    
+                }
+
+                for (let i = 0; i < TotalAttractors; i++) {
+                    attractors.push(new Attractor(width / 2, height/2, 100));    
+                }
+            }
+
+            function draw() {
+                background(0);
+
+                for (let index = 0; index < movers.length; index++) {
+                    const mover = movers[index];
+                    mover.update();
+                    // mover.edges();
+                    mover.show();
+                    attractors[0].attract(mover);
+                }
+
+                for (let index = 0; index < attractors.length; index++) {
+                    const attractor = attractors[index];
+                    // attractor.attract(movers[0]);
+                    attractor.show();
+                }
+            }
+        </script>
+    </head>
+</html> 

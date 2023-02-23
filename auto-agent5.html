@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <title>Autonomous Agent 5 - Vector Dot Product</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            let a, b;
+
+            function setup() {
+                createCanvas(800, 600);
+                a = createVector(100, -60);
+                b = createVector(200, 60);
+            }
+
+            function scalarProjection(a, b) {
+                return a.dot(b.copy().normalize());
+            }
+
+            function vectorProjection(a, b) {
+                let bCopy = b.copy().normalize();
+                let sp = a.dot(bCopy);
+                bCopy.mult(sp);
+                return bCopy;
+            }
+
+            
+
+            function draw() {
+                background(0);
+                strokeWeight(8);
+                stroke(255);
+                let pos = createVector(100, 200);
+
+                line(pos.x, pos.y, pos.x + a.x, pos.y + a.y);
+                line(pos.x, pos.y, pos.x + b.x, pos.y + b.y);
+
+                let vetProj = vectorProjection(a, b);
+
+                strokeWeight(8);
+                stroke(0, 0, 255);
+                line(pos.x, pos.y, pos.x + vetProj.x, pos.y + vetProj.y);
+
+                strokeWeight(8);
+                fill(255);
+                stroke(255);
+                line(pos.x + a.x, pos.y + a.y, pos.x + vetProj.x, pos.y + vetProj.y);
+
+                fill(0, 255, 0);
+                noStroke();
+                circle(pos.x + a.x, pos.y + a.y, 16);
+
+                fill(255, 0, 0);
+                noStroke();
+                circle(pos.x + vetProj.x, pos.y + vetProj.y, 16);
+
+                fill(0, 255, 0);
+                noStroke();
+                circle(pos.x, pos.y, 16);
+            }
+        </script>
+    </head>
+</html> 

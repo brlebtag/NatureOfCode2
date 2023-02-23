@@ -1,0 +1,170 @@
+<html>
+    <head>
+        <title>Autonomous Agent 6 - Path Following (Steering)</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            let path;
+            const MAX_PATH_RADIUS = 20;
+            const HOW_FAR_IN_THE_FUTURE = 50;
+
+            function findProjection(start, future, end) {
+                let v1 = p5.Vector.sub(future, start);
+                let v2 = p5.Vector.sub(end, start);
+                v2.normalize();
+                let sp = v1.dot(v2);
+                v2.mult(sp).add(start);
+                return v2;
+            }
+
+            class Path {
+                constructor(radius, x1, y1, x2, y2) {
+                    this.start = createVector(x1, y1);
+                    this.end = createVector(x2, y2);
+                    this.radius = radius;
+                }
+
+                show() {
+                    stroke(255);
+                    strokeWeight(2);
+                    line(this.start.x, this.start.y, this.end.x, this.end.y);
+
+                    stroke(255, 100);
+                    strokeWeight(this.radius * 2);
+                    line(this.start.x, this.start.y, this.end.x, this.end.y);
+                }
+            }
+
+            class Vehicle {
+                constructor(x, y) {
+                    this.pos = createVector(x, y);
+                    this.velocity = createVector(0 ,0);
+                    this.acceleration = createVector();
+                    this.mass = 1;
+                    this.maxSpeed = 4;
+                    this.radius = 16;
+                    this.maxForce = 0.1;
+                    this.thresholdToSlow = 100;
+                }
+
+                wander() {
+                    let force = p5.Vector.random2D();
+                    this.applyForce(force);
+                }
+
+                arrive(target) {
+                    let force = p5.Vector.sub(target, this.pos);
+                    let distance = force.mag();
+                    if (distance < this.thresholdToSlow) {
+                        let desiredSpeed = map(distance, 0, this.thresholdToSlow, 0, this.maxSpeed);
+                        force.setMag(desiredSpeed);
+                    } else {
+                        force.setMag(this.maxSpeed);
+                    }
+
+                    force.sub(this.velocity);
+                    force.limit(this.maxForce);
+                    this.applyForce(force);
+                }
+
+                seek(target) {
+                    // let desiredVelocity = p5.Vector.sub(target, this.pos);
+                    // desiredVelocity.setMag(this.maxSpeed); // My strategy is to select a desired velocity equals to max speed (other strategies could have been selected).
+                    // let steeringForce = p5.Vector.sub(desiredVelocity, this.velocity);
+                    // steeringForce.limit(this.maxForce);
+                    // this.applyForce(steeringForce);
+
+                    let force = p5.Vector.sub(target, this.pos);
+                    force.setMag(this.maxSpeed);
+                    force.sub(this.velocity);
+                    force.limit(this.maxForce);
+                    return force;
+                }
+
+                edges() {
+                    if (this.pos.y > (height + this.radius * 2)) {
+                        this.pos.y = 0;
+                    } else if (this.pos.y < - this.radius * 2) {
+                        this.pos.y = height - this.radius;
+                    }
+
+                    if (this.pos.x > (width + this.radius * 2)) {
+                        this.pos.x = 0;
+                    } else if (this.pos.x < -this.radius * 2) {
+                        this.pos.x = width - this.radius;
+                    }
+                }
+
+                follow(path) {
+                    // Step 1: Calculate future position
+                    let futurePosition = this.velocity.copy();
+                    futurePosition.mult(HOW_FAR_IN_THE_FUTURE).add(this.pos);
+                    fill(255, 0, 0);
+                    noStroke();
+                    circle(futurePosition.x, futurePosition.y, 16);
+
+                    let target = findProjection(path.start, futurePosition, path.end);
+
+                    fill(0, 255, 0);
+                    noStroke();
+                    circle(target.x, target.y, 16);
+
+                    let distance = p5.Vector.dist(futurePosition, target);
+
+                    console.log(distance);
+
+                    if (distance > path.radius) {
+                        return this.seek(target);
+                    } else {
+                        return createVector(0, 0);
+                    }
+                }
+
+                applyForce(force) {
+                    this.acceleration.add(force); // F = m * a => a = F / m (1) => a = F;
+                }
+
+                update() {
+                    this.velocity.add(this.acceleration);
+                    this.velocity.limit(this.maxSpeed);
+                    this.pos.add(this.velocity);
+                    this.acceleration.set(0, 0);
+                }
+
+                show() {
+                    stroke(255);
+                    strokeWeight(2);
+                    fill(255);
+                    push();
+                    translate(this.pos.x, this.pos.y);
+                    rotate(this.velocity.heading());
+                    triangle(-this.radius, - this.radius /2 , -this.radius, this.radius/2, this.radius, 0);
+                    pop();
+                }
+            }
+
+            let vehicle;
+
+            function setup() {
+                createCanvas(800, 600);
+                vehicle = new Vehicle(100, 100);
+                vehicle.velocity.x = 2;
+                path = new Path(MAX_PATH_RADIUS, 0, height / 2, width, height / 2);
+            }
+
+            function draw() {
+                background(0);
+
+                let force = vehicle.follow(path);
+                vehicle.applyForce(force);
+
+                path.end.y = mouseY;
+
+                vehicle.update();
+                vehicle.show();
+                vehicle.edges();
+
+                path.show();
+            }
+        </script>
+    </head>
+</html> 

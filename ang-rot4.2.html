@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>Angles and Rotation 4.2 - Polar Coordinates </title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+
+        var angle = 0;
+        var r = 150;
+
+        function setup() {
+            createCanvas(800, 600);
+        }
+
+        function draw() {
+            background(0, 10);
+            // stroke(255);
+            // strokeWeight(4);
+            // noFill();
+            // circle(0, 0, r * 2);
+
+            translate(width / 2, height / 2);
+            strokeWeight(16);
+            stroke(252, 238, 33);
+            let x = r * cos(angle);
+            let y = r * sin(angle);
+            point(x, y);
+
+            angle += 0.04;
+            r -= random(-2, 2);
+        }
+        </script>
+    </head>
+</html> 

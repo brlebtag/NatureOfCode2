@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <title>Phaser 2: Gravity</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+        <!--
+            It is not possible to have a circle using arcade!
+            https://www.reddit.com/r/phaser/comments/dbj8ev/making_a_simple_circle_when_using_arcade_physics/
+        -->
+        <script>
+            const WIDTH = 800;
+            const HEIGHT = 600;
+            var config = {
+                type: Phaser.AUTO,
+                width: WIDTH,
+                height: HEIGHT,
+                physics: {
+                    default: 'arcade',
+                    arcade: {
+                        gravity: { y: 200 },
+                        debug: true
+                    }
+                },
+                scene: {
+                    preload: preload,
+                    create: create,
+                    update: update,
+                }
+            };
+
+            const game = new Phaser.Game(config);
+            var triangle;
+
+            function preload() {
+                this.load.setBaseURL('http://localhost');
+                this.load.image('cicle', 'Circle.png');
+                this.load.image('triangle', 'Triangle.png');
+            }
+
+            function create() {
+                this.physics.world.setBounds(0, 0, WIDTH, HEIGHT);
+                triangle = this.physics.add.image(100, 100, 'triangle');
+                triangle.body.setCollideWorldBounds(true);
+                triangle.body.setVelocity(100, 0);
+                triangle.body.setGravity(0, 100);
+                triangle.body.setBounce(1, 1);
+            }
+
+            function update() {
+                triangle.rotation = triangle.body.velocity.angle();
+            }
+        </script>
+    </head>
+</html> 

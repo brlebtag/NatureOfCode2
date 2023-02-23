@@ -1,0 +1,133 @@
+
+<html>
+    <head>
+        <title>Challenge #160 - Spring Forces</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+            const RestLength = 200;
+            const K = 0.1;
+            let particles = [];
+            let springs = [];
+            let spacing = 20;
+            let gravity;
+            
+
+            class Spring {
+                constructor(k, restLength, begin, end) {
+                    this.K = k;
+                    this.restLength = restLength;
+                    this.begin = begin;
+                    this.end = end;
+                }
+
+                update() {
+                    let force = p5.Vector.sub(this.end.position, this.begin.position);
+                    let displacement = force.mag() - this.restLength;
+                    force.normalize().mult(this.K * displacement);
+                    this.begin.applyForce(force);
+                    force.mult(-1);
+                    this.end.applyForce(force);
+                }
+
+                show() {
+                    strokeWeight(4);
+                    stroke(255);
+                    line(
+                        this.begin.position.x,
+                        this.begin.position.y,
+                        this.end.position.x,
+                        this.end.position.y
+                    );
+                }
+            }
+
+            class Particle {
+                constructor (x, y) {
+                    this.acceleration = createVector(0, 0);
+                    this.velocity = createVector(0, 0);
+                    this.position = createVector(x, y);
+                    this.mass = 1;
+                    this.locked = false;
+                }
+
+                applyForce(force) {
+                    let f = force.copy();
+                    f.div(this.mass);
+                    this.acceleration.add(f);
+                }
+
+                update() {
+                    if (this.locked) return;
+                    this.velocity.mult(0.99);
+                    this.velocity.add(this.acceleration);
+                    this.position.add(this.velocity);
+                    this.acceleration.mult(0);
+                }
+
+                show() {
+                    stroke(255);
+                    strokeWeight(2);
+                    fill(45, 197, 244);
+                    ellipse(this.position.x, this.position.y, 16);
+                }
+            }
+
+            function setup() {
+                createCanvas(800, 600);
+                for (let i = 0; i < 10; i++) {
+                    particles[i] = new Particle(200, i * spacing);
+                    if ( i == 0) continue;
+
+                    springs[i - 1] = new Spring(K, spacing, particles[i-1], particles[i]);
+                }
+                particles[0].locked = true;
+                bob = new Particle(350, 300);
+                anchor = new Particle(300, 0);
+                gravity = createVector(0, 0.2);
+                spring = new Spring(K, RestLength, bob, anchor);
+            }
+
+            function draw() {
+                background(112, 50, 126);
+                // spring.show();
+                // spring.update();
+                // bob.show();
+                // bob.update();
+                // anchor.show();
+                // anchor.update();
+
+                
+
+                for (const s of springs) {
+                    s.update();
+                    s.show();
+                }
+
+                noFill();
+                stroke(255);
+                strokeWeight(8);
+
+                let head = particles[0];
+                let tail = particles[particles.length - 1];
+
+                beginShape();
+                curveVertex(head.position.x, head.position.y);
+                for (const p of particles) {
+                    p.applyForce(gravity);
+                    p.update();
+                    curveVertex(p.position.x, p.position.y);
+                    // p.show();
+                }
+                curveVertex(tail.position.x, tail.position.y);
+                endShape();
+
+                
+
+                if (mouseIsPressed) {
+                    tail.position.set(mouseX, mouseY);
+                    tail.velocity.set(0, 0);
+                }
+            }
+        </script>
+    </head>
+</html> 
