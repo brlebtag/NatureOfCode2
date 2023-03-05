@@ -1,0 +1,144 @@
+
+<html>
+    <head>
+        <title>Challenge #124 - Flock Simulation</title>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+        <script>
+
+            let flock = [];
+            const TOTAL_FLOCK = 50;
+            const MAX_PERCEPTION_RADIUS = 50;
+            let alignSlider, cohesionSlider, separationSlider;
+
+            class Boid {
+                constructor(x, y) {
+                    this.position = createVector(x, y);
+                    this.velocity = p5.Vector.random2D();
+                    this.velocity.setMag(random(0.5, 1.5));
+                    this.acceleration = createVector(0, 0);
+                    this.maxForce = 0.2;
+                    this.maxSpeed = 4;
+                }
+
+                applyForce(force) {
+                    this.acceleration.add(force);
+                }
+                edges() {
+                    if (this.position.x > width) {
+                        this.position.x = 0;
+                    } else if (this.position.x < 0) {
+                        this.position.x = width;
+                    }
+
+                    if (this.position.y > height) {
+                        this.position.y = 0;
+                    } else if (this.position.y < 0) {
+                        this.position.y = height;
+                    }
+                }
+
+                update() {
+                    this.acceleration.limit(this.maxForce);
+                    this.velocity.add(this.acceleration);
+                    this.velocity.limit(this.maxSpeed);
+                    this.position.add(this.velocity);
+                    this.acceleration.set(0, 0);
+                }
+
+                align(boids) {
+                    let steeringForce = createVector(); //desiredVelocity
+
+                    for (const other of boids) {
+                        steeringForce.add(other.velocity);
+                    }
+
+                    if (boids.length > 0) {
+                        steeringForce.div(boids.length);
+                        steeringForce.setMag(this.maxSpeed);
+                        steeringForce.sub(this.velocity); // steeringForce = p5.Vector.sub(desiredVelocity, this.velocity)
+                    }
+
+                    return steeringForce;
+                }
+
+                cohesion(boids) {
+                    let steeringForce = createVector(); //desiredVelocity
+
+                    for (const other of boids) {
+                        steeringForce.add(other.position);
+                    }
+
+                    if (boids.length > 0) {
+                        steeringForce.div(boids.length); // medium position
+                        steeringForce.sub(this.position);
+                        steeringForce.setMag(this.maxSpeed);
+                        steeringForce.sub(this.velocity); // steeringForce = p5.Vector.sub(desiredVelocity, this.velocity)
+                        steeringForce.limit(this.maxForce);
+                    }
+
+                    return steeringForce;
+                }
+
+                separation(boids) {
+                    let steeringForce = createVector(); //desiredVelocity
+
+                    for (const other of boids) {
+                        let difference = p5.Vector.sub(this.position, other.position); // a force towards me
+                        difference.div(difference.mag());
+                        steeringForce.add(difference);
+                    }
+
+                    if (boids.length > 0) {
+                        steeringForce.div(boids.length); // medium position
+                        steeringForce.setMag(this.maxSpeed);
+                        steeringForce.sub(this.velocity); // steeringForce = p5.Vector.sub(desiredVelocity, this.velocity)
+                        steeringForce.limit(this.maxForce);
+                    }
+
+                    return steeringForce;
+                }
+
+                flock(boids) {
+                    let self = this;
+                    var closest = boids.filter(
+                        other => p5.Vector.dist(self.position, other.position) < MAX_PERCEPTION_RADIUS && 
+                        other != self
+                    );
+
+                    this.applyForce(this.align(closest).mult(alignSlider.value()));
+                    this.applyForce(this.cohesion(closest).mult(cohesionSlider.value()));
+                    this.applyForce(this.separation(closest).mult(separationSlider.value()));
+                }
+
+                show() {
+                    strokeWeight(16);
+                    stroke(255);
+                    point(this.position.x, this.position.y);
+                }
+            }
+
+            function setup() {
+                createCanvas(800, 600);
+
+                alignSlider = createSlider(0, 5, 0.1);
+                cohesionSlider = createSlider(0, 5, 0.1);
+                separationSlider = createSlider(0, 5, 0.1);
+
+                for (let i = 0; i < TOTAL_FLOCK; i++) {
+                    flock.push(new Boid(random(width), random(height)));
+                }
+            }
+
+            function draw() {
+                background(51);
+
+                for (const boid of flock) {
+                    boid.edges();
+                    boid.flock(flock);
+                    boid.update();
+                    boid.show();
+                }
+            }
+        </script>
+    </head>
+</html> 
